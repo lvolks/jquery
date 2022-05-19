@@ -1,0 +1,76 @@
+package br.edu.up;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Scanner;
+
+public class Programa {
+
+	public static void main(String[] args) {
+		
+		String url = "jdbc:sqlite:C:\\_src\\db\\db_sqlite.db";
+		
+		try {
+			
+			Connection con = DriverManager.getConnection(url);
+			
+			Scanner leitor = new Scanner(System.in);
+			
+			System.out.println("Informe o nome da pessoa: ");
+			String Nome = leitor.nextLine();
+			
+			System.out.println("Informe o CPF da pessoa: ");
+			String CPF = leitor.nextLine();
+			
+			System.out.println("Informe a data de nascimento da pessoa: ");
+			String dataN = leitor.nextLine();
+			
+			Statement stmtInsert = con.createStatement();
+			String queryInsert = "INSERT INTO pessoas (nome, cpf, dtanasc) VALUES ('"+Nome+"', '"+CPF+"', '"+dataN+"')";
+			stmtInsert.execute(queryInsert);
+			
+			
+			Statement stmtUpdate = con.createStatement();
+			String queryUpdate = "UPDATE pessoas set nome = 'Antonio' where id = 3";
+			stmtUpdate.executeUpdate(queryUpdate);
+			
+			
+			Statement stmtDelete = con.createStatement();
+			String queryDelete = "delete from pessoas where id=2";
+			stmtDelete.execute(queryDelete);
+			
+			
+			Statement stmt = con.createStatement();
+			String querySelect = "select * from pessoas";
+			stmt.executeUpdate(querySelect);
+			
+			
+			ResultSet resultado = stmt.executeQuery(querySelect);
+			
+			while(resultado.next()) {
+				int id = resultado.getInt(1);
+				String nome = resultado.getString(2);
+				String cpf = resultado.getString(3);
+				String dtanasc = resultado.getString(4);
+				
+				System.out.println("Id: " + id);
+				System.out.println("Nome: " + nome);
+				System.out.println("CPF: " + cpf);
+				System.out.println("Data de nascimento: " + dtanasc);
+				System.out.println("------------------------");
+			}
+			
+			
+			leitor.close();
+			
+		} catch (SQLException e) {
+			System.out.println("--------> ERRO: Falha na conexão com o banco de dados!");
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			
+		}
+	} 
+}
